@@ -3,17 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>实习生成长导航 - 智能协同平台</title>
+<title>实习生成长导航 · 腾讯青科实训营</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{--primary:#1677ff;--pl:#e6f4ff;--pd:#0958d9;--ok:#52c41a;--warn:#faad14;--err:#ff4d4f;--purple:#764ba2;--t1:#1f1f1f;--t2:#666;--t3:#999;--bg:#f5f7fa;--card:#fff;--bd:#e8e8e8;--sh:0 2px 8px rgba(0,0,0,.06)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:var(--bg);color:var(--t1);line-height:1.6}
-.lg{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#667eea,#764ba2);padding:20px}
-.lg-b{background:#fff;border-radius:20px;padding:48px 40px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15);text-align:center}
-.lg-logo{width:64px;height:64px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff}
-.lg-t{font-size:24px;font-weight:700;margin-bottom:8px}
-.lg-s{font-size:14px;color:var(--t3);margin-bottom:32px}
+.lg{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0052d9 0%,#003eb3 40%,#1a0a3e 100%);padding:20px;position:relative;overflow:hidden}
+.lg::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,114,255,.15) 0%,transparent 70%);top:-200px;right:-100px;pointer-events:none}
+.lg::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,210,255,.1) 0%,transparent 70%);bottom:-100px;left:-50px;pointer-events:none}
+.lg-b{background:rgba(255,255,255,.97);border-radius:24px;padding:44px 40px;max-width:480px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.25);text-align:center;backdrop-filter:blur(20px);position:relative;z-index:1}
+.lg-logo{width:72px;height:72px;background:linear-gradient(135deg,#0052d9,#0091ff);border-radius:18px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;box-shadow:0 8px 24px rgba(0,82,217,.3)}
+.lg-badge{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#0052d9,#0072ff);color:#fff;padding:4px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.5px;margin-bottom:16px}
+.lg-t{font-size:22px;font-weight:700;margin-bottom:6px;background:linear-gradient(135deg,#0052d9,#0091ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lg-s{font-size:13px;color:var(--t3);margin-bottom:28px}
+.lg-camp{font-size:12px;color:var(--t3);margin-top:20px;padding-top:16px;border-top:1px solid var(--bd);display:flex;align-items:center;justify-content:center;gap:6px}
+.lg-camp svg{flex-shrink:0}
 .rl{display:flex;flex-direction:column;gap:12px}
 .rc{display:flex;align-items:center;padding:16px 20px;border:2px solid var(--bd);border-radius:12px;cursor:pointer;transition:all .2s;text-align:left}
 .rc:hover,.rc.on{border-color:var(--primary);background:var(--pl);transform:translateY(-1px);box-shadow:var(--sh)}
@@ -28,7 +33,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
 .app{display:none;min-height:100vh;flex-direction:column}.app.on{display:flex}
 .hd{background:#fff;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.04)}
 .hd-l{display:flex;align-items:center;gap:12px}
-.hd-logo{width:32px;height:32px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px}
+.hd-logo{width:32px;height:32px;background:linear-gradient(135deg,#0052d9,#0091ff);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px}
 .hd-t{font-size:16px;font-weight:600}
 .hd-r{display:flex;align-items:center;gap:12px}
 .ut{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 6px;border-radius:20px;font-size:13px;font-weight:500}
@@ -135,9 +140,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
 <!-- LOGIN -->
 <div id="loginPage" class="lg">
   <div class="lg-b">
-    <div class="lg-logo">🚀</div>
+    <div class="lg-logo">🐧</div>
+    <div class="lg-badge">⚡ 腾讯青科实训营</div>
     <h1 class="lg-t">实习生成长导航</h1>
-    <p class="lg-s">智能协同论坛 · 让成长可见</p>
+    <p class="lg-s">智能协同论坛 · AI赋能 · 让成长可见</p>
     <div class="rl">
       <div class="rc" onclick="pickRole('intern')" data-r="intern">
         <div class="ri c1">🎓</div>
@@ -157,6 +163,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
       <input id="deptIn" placeholder="部门（选填）" />
       <button class="bg" onclick="login()">进入平台</button>
     </div>
+    <div class="lg-camp">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#0052d9"/></svg>
+      Powered by 腾讯青科实训营 · Tech for Good
+    </div>
   </div>
 </div>
 
@@ -164,7 +174,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-
 <div id="app" class="app">
   <header class="hd">
     <div class="hd-l">
-      <div class="hd-logo">🚀</div>
+      <div class="hd-logo">🐧</div>
       <span class="hd-t">实习生成长导航</span>
     </div>
     <div class="hd-r">
