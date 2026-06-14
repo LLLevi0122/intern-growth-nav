@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实习生成长导航 - 智能协同平台</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+:root{--primary:#1677ff;--pl:#e6f4ff;--pd:#0958d9;--ok:#52c41a;--warn:#faad14;--err:#ff4d4f;--purple:#764ba2;--t1:#1f1f1f;--t2:#666;--t3:#999;--bg:#f5f7fa;--card:#fff;--bd:#e8e8e8;--sh:0 2px 8px rgba(0,0,0,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;background:var(--bg);color:var(--t1);line-height:1.6}
+.lg{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#667eea,#764ba2);padding:20px}
+.lg-b{background:#fff;border-radius:20px;padding:48px 40px;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.15);text-align:center}
+.lg-logo{width:64px;height:64px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:16px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff}
+.lg-t{font-size:24px;font-weight:700;margin-bottom:8px}
+.lg-s{font-size:14px;color:var(--t3);margin-bottom:32px}
+.rl{display:flex;flex-direction:column;gap:12px}
+.rc{display:flex;align-items:center;padding:16px 20px;border:2px solid var(--bd);border-radius:12px;cursor:pointer;transition:all .2s;text-align:left}
+.rc:hover,.rc.on{border-color:var(--primary);background:var(--pl);transform:translateY(-1px);box-shadow:var(--sh)}
+.ri{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-right:16px;flex-shrink:0}
+.ri.c1{background:#e6f4ff}.ri.c2{background:#f6ffed}.ri.c3{background:#fff7e6}
+.rinfo h3{font-size:16px;margin-bottom:2px}.rinfo p{font-size:12px;color:var(--t3)}
+.li{margin-top:20px;display:flex;flex-direction:column;gap:12px}
+.li input{padding:12px 16px;border:1px solid var(--bd);border-radius:8px;font-size:14px;outline:none;transition:border .2s}
+.li input:focus{border-color:var(--primary)}
+.bg{background:var(--primary);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
+.bg:hover{background:var(--pd)}
+.app{display:none;min-height:100vh;flex-direction:column}.app.on{display:flex}
+.hd{background:#fff;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.hd-l{display:flex;align-items:center;gap:12px}
+.hd-logo{width:32px;height:32px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px}
+.hd-t{font-size:16px;font-weight:600}
+.hd-r{display:flex;align-items:center;gap:12px}
+.ut{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 6px;border-radius:20px;font-size:13px;font-weight:500}
+.ut .av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px}
+.ut.ti{background:#e6f4ff;color:#1677ff}.ut.ti .av{background:#1677ff}
+.ut.tm{background:#f6ffed;color:#389e0d}.ut.tm .av{background:#389e0d}
+.ut.th{background:#fff7e6;color:#d48806}.ut.th .av{background:#d48806}
+.bo{background:none;border:1px solid var(--bd);padding:6px 12px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--t2)}
+.tabs{background:#fff;display:flex;padding:0 24px;border-bottom:1px solid var(--bd);overflow-x:auto}
+.tb{padding:12px 20px;font-size:14px;color:var(--t2);cursor:pointer;border:none;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;background:none}
+.tb:hover{color:var(--primary)}.tb.on{color:var(--primary);border-bottom-color:var(--primary);font-weight:600}
+.mn{flex:1;padding:24px;max-width:960px;margin:0 auto;width:100%}
+.pn{display:none}.pn.on{display:block}
+.cd{background:var(--card);border-radius:12px;padding:24px;box-shadow:var(--sh);margin-bottom:16px}
+.ct{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.st{background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--sh)}
+.st-l{font-size:12px;color:var(--t3);margin-bottom:4px}
+.st-v{font-size:24px;font-weight:700}
+.it{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:.3px}
+.it.intern{background:#e6f4ff;color:#1677ff}
+.it.mentor{background:#f6ffed;color:#389e0d}
+.it.hr{background:#fff7e6;color:#d48806}
+.pt{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;margin-right:4px;white-space:nowrap}
+.pt.tag-attention{background:#fff1f0;color:#cf1322}
+.pt.tag-share{background:#f6ffed;color:#389e0d}
+.pt.tag-help{background:#e6f4ff;color:#1677ff}
+.pt.tag-discuss{background:#fff7e6;color:#d48806}
+.pt.tag-notice{background:#f9f0ff;color:#722ed1}
+.post{padding:16px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s}
+.post:last-child{border-bottom:none}
+.post:hover{background:#fafafa}
+.post-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.post-title{font-size:15px;font-weight:500;flex:1}
+.post-status{padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;white-space:nowrap}
+.post-status.urgent{background:#fff1f0;color:#cf1322}
+.post-status.pending{background:#e6f4ff;color:#1677ff}
+.post-status.resolved{background:#f6ffed;color:#389e0d}
+.post-meta{font-size:12px;color:var(--t3);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.post-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.rp{padding:12px;background:#fafafa;border-radius:8px;margin-top:8px}
+.rp-h{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px}
+.rp-a{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;flex-shrink:0}
+.rp-t{font-size:14px;color:var(--t2);line-height:1.8}
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:13px;font-weight:500;margin-bottom:6px;color:var(--t2)}
+.fi,.ft,.fs{width:100%;padding:10px 12px;border:1px solid var(--bd);border-radius:8px;font-size:14px;outline:none;transition:border .2s;font-family:inherit}
+.fi:focus,.ft:focus,.fs:focus{border-color:var(--primary)}
+.ft{min-height:100px;resize:vertical}
+.tag-sel{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.tag-opt{padding:4px 12px;border-radius:16px;font-size:12px;border:1px solid var(--bd);cursor:pointer;transition:all .2s;background:#fff}
+.tag-opt:hover{border-color:var(--primary)}
+.tag-opt.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn{padding:8px 20px;border-radius:8px;border:none;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s}
+.bp{background:var(--primary);color:#fff}.bp:hover{background:var(--pd)}
+.ai{background:linear-gradient(135deg,#e6f4ff,#f0e6ff);border-radius:12px;padding:16px;margin-bottom:16px;border-left:3px solid var(--purple)}
+.ai-b{display:inline-flex;align-items:center;gap:4px;background:rgba(118,75,162,.1);color:var(--purple);padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin-bottom:8px}
+.ai-t{font-size:14px;line-height:1.7}
+.ch{position:relative;height:260px;margin:12px 0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.pb{height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin:6px 0}
+.pf{height:100%;border-radius:4px;transition:width .5s}
+.tl{position:relative;padding-left:24px}
+.tl::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--bd)}
+.tli{position:relative;padding-bottom:20px}
+.tli::before{content:'';position:absolute;left:-20px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--primary);border:2px solid #fff;box-shadow:0 0 0 2px var(--primary)}
+.tli.done::before{background:var(--ok);box-shadow:0 0 0 2px var(--ok)}
+.tli.now::before{background:var(--warn);box-shadow:0 0 0 2px var(--warn)}
+.tl-p{font-size:13px;color:var(--primary);font-weight:600}
+.tl-d{font-size:14px;margin-top:2px}
+.tl-t{font-size:12px;color:var(--t3)}
+.pl{padding:16px;border-left:3px solid var(--primary);background:#fafafa;border-radius:0 8px 8px 0;margin-bottom:12px}
+.pl-p{font-size:13px;color:var(--primary);font-weight:600;margin-bottom:4px}
+.pl-b{font-size:14px}
+.pl-t{font-size:12px;color:var(--t3);margin-top:4px}
+.al{padding:16px;border-radius:0 8px 8px 0;margin-bottom:12px}
+.al.w{border-left:3px solid var(--warn);background:#fffbe6}
+.al.d{border-left:3px solid var(--err);background:#fff1f0}
+.al.i{border-left:3px solid var(--primary);background:var(--pl)}
+.fb{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.fc{padding:6px 14px;border-radius:20px;font-size:12px;border:1px solid var(--bd);cursor:pointer;transition:all .2s;background:#fff}
+.fc:hover,.fc.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.toast{position:fixed;top:80px;right:24px;background:#fff;padding:12px 20px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:1000;font-size:14px;transform:translateX(120%);transition:transform .3s}
+.toast.show{transform:translateX(0)}
+.toast.ok{border-left:3px solid var(--ok)}
+.toast.inf{border-left:3px solid var(--primary)}
+.mo{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
+.mo.show{display:flex}
+.md{background:#fff;border-radius:12px;padding:24px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.md-t{font-size:18px;font-weight:600;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.md-x{background:none;border:none;font-size:20px;cursor:pointer;color:var(--t3)}
+.intern-card{background:#fafafa;border-radius:8px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.intern-card .ic-av{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.intern-card .ic-info{flex:1}
+.intern-card .ic-name{font-size:14px;font-weight:500}
+.intern-card .ic-dept{font-size:12px;color:var(--t3)}
+.intern-card .ic-score{font-size:18px;font-weight:700;color:var(--primary)}
+@media(max-width:768px){.g2,.g3{grid-template-columns:1fr}.mn{padding:16px}.stats{grid-template-columns:repeat(2,1fr)}.lg-b{padding:32px 24px}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="lg">
+  <div class="lg-b">
+    <div class="lg-logo">🚀</div>
+    <h1 class="lg-t">实习生成长导航</h1>
+    <p class="lg-s">智能协同论坛 · 让成长可见</p>
+    <div class="rl">
+      <div class="rc" onclick="pickRole('intern')" data-r="intern">
+        <div class="ri c1">🎓</div>
+        <div class="rinfo"><h3>实习生</h3><p>提问、回答、追踪成长</p></div>
+      </div>
+      <div class="rc" onclick="pickRole('mentor')" data-r="mentor">
+        <div class="ri c2">👔</div>
+        <div class="rinfo"><h3>正式员工 / 导师</h3><p>提问、回答、关注实习生成长</p></div>
+      </div>
+      <div class="rc" onclick="pickRole('hr')" data-r="hr">
+        <div class="ri c3">🏢</div>
+        <div class="rinfo"><h3>人力部门</h3><p>提问、回答、数据看板、培养方案</p></div>
+      </div>
+    </div>
+    <div class="li">
+      <input id="nameIn" placeholder="输入昵称（可匿名）" />
+      <input id="deptIn" placeholder="部门（选填）" />
+      <button class="bg" onclick="login()">进入平台</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app">
+  <header class="hd">
+    <div class="hd-l">
+      <div class="hd-logo">🚀</div>
+      <span class="hd-t">实习生成长导航</span>
+    </div>
+    <div class="hd-r">
+      <div id="userTag" class="ut"></div>
+      <button class="bo" onclick="logout()">退出</button>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tb on" data-p="forum" onclick="swTab(this)">💬 论坛</button>
+    <button class="tb" data-p="ask" onclick="swTab(this)">✍️ 发帖</button>
+    <button class="tb" data-p="growth" onclick="swTab(this)">📈 成长看板</button>
+    <button id="tabHR" class="tb" data-p="hr" onclick="swTab(this)" style="display:none">📊 HR管理</button>
+  </nav>
+
+  <div class="mn">
+
+    <!-- FORUM -->
+    <div id="p-forum" class="pn on">
+      <div class="fb" id="filterBar"></div>
+      <div class="cd"><div id="postList"></div></div>
+    </div>
+
+    <!-- ASK -->
+    <div id="p-ask" class="pn">
+      <div class="cd">
+        <div class="ct">✍️ 发帖</div>
+        <div class="fg"><label class="fl">标题</label><input class="fi" id="qTitle" placeholder="简洁描述你的问题" /></div>
+        <div class="fg">
+          <label class="fl">分类</label>
+          <select class="fs" id="qCat"><option>业务理解</option><option>流程规范</option><option>技能提升</option><option>职业发展</option><option>其他</option></select>
+        </div>
+        <div class="fg">
+          <label class="fl">标签（可多选）</label>
+          <div class="tag-sel" id="tagSel">
+            <span class="tag-opt" data-tag="关注事项" onclick="toggleTag(this)">🔴 关注事项</span>
+            <span class="tag-opt" data-tag="经验分享" onclick="toggleTag(this)">🟢 经验分享</span>
+            <span class="tag-opt" data-tag="求助" onclick="toggleTag(this)">🔵 求助</span>
+            <span class="tag-opt" data-tag="讨论" onclick="toggleTag(this)">🟡 讨论</span>
+            <span class="tag-opt" data-tag="官方通知" onclick="toggleTag(this)">🟣 官方通知</span>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">紧急程度</label>
+          <select class="fs" id="qUrg"><option value="normal">一般</option><option value="urgent">紧急</option></select>
+        </div>
+        <div class="fg"><label class="fl">详情</label><textarea class="ft" id="qBody" placeholder="详细描述…"></textarea></div>
+        <div class="ai" id="routeHint" style="display:none">
+          <div class="ai-b">🤖 AI 智能路由</div>
+          <div class="ai-t" id="routeText"></div>
+        </div>
+        <button class="btn bp" style="padding:10px 32px;font-size:15px" onclick="submitPost()">发布</button>
+      </div>
+    </div>
+
+    <!-- GROWTH - dynamically rendered -->
+    <div id="p-growth" class="pn">
+      <div id="growthContent"></div>
+    </div>
+
+    <!-- HR -->
+    <div id="p-hr" class="pn">
+      <div class="ai">
+        <div class="ai-b">✨ AI 洞察</div>
+        <div class="ai-t">本周<strong>「流程规范」</strong>类问题激增（环比+85%），集中在报销和审批流程，建议增补专项培训；某实习生连续5天无提问且课程停滞，建议导师主动沟通。</div>
+      </div>
+      <div class="stats">
+        <div class="st"><div class="st-l">在岗实习生</div><div class="st-v" style="color:var(--primary)">20</div></div>
+        <div class="st"><div class="st-l">论坛帖子</div><div class="st-v" style="color:var(--purple)">156</div></div>
+        <div class="st"><div class="st-l">解答率</div><div class="st-v" style="color:var(--ok)">82%</div></div>
+        <div class="st"><div class="st-l">平均响应</div><div class="st-v" style="color:var(--warn)">3.1h</div></div>
+      </div>
+      <div class="g2">
+        <div class="cd"><div class="ct">📊 问题类型趋势</div><div class="ch"><canvas id="hrTrend"></canvas></div></div>
+        <div class="cd"><div class="ct">🎯 部门解答效率</div><div class="ch"><canvas id="hrBar"></canvas></div></div>
+      </div>
+      <div class="cd">
+        <div class="ct">🔔 预警中心</div>
+        <div class="al d"><strong>🚨 紧急问题超时</strong><br><span style="font-size:13px;color:var(--t2)">2条紧急问题超过4h未响应，建议立即转派</span><br><span style="font-size:11px;color:var(--t3)">30分钟前</span></div>
+        <div class="al w"><strong>⚠️ 活跃度预警</strong><br><span style="font-size:13px;color:var(--t2)">某实习生连续5天无提问记录，课程进度停滞在20%</span><br><span style="font-size:11px;color:var(--t3)">1小时前</span></div>
+        <div class="al i"><strong>💡 导师负载</strong><br><span style="font-size:13px;color:var(--t2)">某导师带教4人，解答率仅60%，建议增加backup</span><br><span style="font-size:11px;color:var(--t3)">3小时前</span></div>
+        <div class="al i"><strong>💡 培训效果</strong><br><span style="font-size:13px;color:var(--t2)">流程规范类问题占比上升至28%，建议第2周增补0.5天专项培训</span><br><span style="font-size:11px;color:var(--t3)">5小时前</span></div>
+      </div>
+      <div class="cd">
+        <div class="ct">📝 培养方案 · 管培生</div>
+        <div class="pl"><div class="pl-p">第一阶段 · 入职适应（第1-2周）</div><div class="pl-b">入职培训、组织架构、产品线认知、导师配对</div></div>
+        <div class="pl"><div class="pl-p">第二阶段 · 业务融入（第3-6周）</div><div class="pl-b">跟随导师参与项目、学习销售流程、客户拜访</div></div>
+        <div class="pl"><div class="pl-p">第三阶段 · 独立作战（第7-10周）</div><div class="pl-b">独立负责区域客户、制定促销方案、数据分析报告</div></div>
+        <div class="pl"><div class="pl-p">第四阶段 · 成果交付（第11-12周）</div><div class="pl-b">项目答辩、转正评估、职业发展路径规划</div></div>
+      </div>
+      <div class="cd">
+        <div class="ct">✏️ 方案调整</div>
+        <div class="fg"><label class="fl">调整阶段</label><select class="fs" id="planPh"><option>第一阶段</option><option>第二阶段</option><option>第三阶段</option><option>第四阶段</option></select></div>
+        <div class="fg"><label class="fl">调整类型</label><select class="fs" id="planType"><option>增补培训内容</option><option>调整时间安排</option><option>更换导师配对</option><option>修改考核标准</option></select></div>
+        <div class="fg"><label class="fl">调整说明</label><textarea class="ft" id="planDesc" placeholder="描述调整内容和原因…"></textarea></div>
+        <button class="btn bp" style="padding:10px 32px" onclick="submitPlan()">提交调整</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast ok"><span id="toastMsg">ok</span></div>
+
+<!-- Modal -->
+<div id="modalBg" class="mo" onclick="if(event.target===this)closeModal()">
+  <div class="md">
+    <div class="md-t"><span id="modalTitle">详情</span><button class="md-x" onclick="closeModal()">&times;</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+var RM={intern:'实习生',mentor:'正式员工',hr:'HR'};
+var RC={intern:'intern',mentor:'mentor',hr:'hr'};
+var role='',user='',dept='',curFilter='all';
+var selectedTags=[];
+var chartInstances={};
+
+var TAG_MAP={
+  '关注事项':{cls:'tag-attention',icon:'🔴'},
+  '经验分享':{cls:'tag-share',icon:'🟢'},
+  '求助':{cls:'tag-help',icon:'🔵'},
+  '讨论':{cls:'tag-discuss',icon:'🟡'},
+  '官方通知':{cls:'tag-notice',icon:'🟣'}
+};
+
+var D={
+  posts:[
+    {id:1,title:'产品淡旺季的营销节奏怎么把握？',cat:'业务理解',urg:'normal',status:'resolved',author:'云端',authorRole:'intern',authorDept:'营销一部',time:'2小时前',tags:['求助','关注事项'],body:'刚入职对全年营销节奏不太清楚。旺季可以理解，但淡季应该做什么？',answers:[
+      {author:'星辰',role:'mentor',dept:'营销一部',avatar:'星',text:'核心是"淡季做基础，旺季冲销量"：\n\n1. 淡季：渠道建设+客户维护+来年方案规划\n2. 旺季：终端促销+门店活动+线上联动\n\n你目前在淡季准备期，正好跟一波方案规划，很好的学习机会。',time:'1小时前'},
+      {author:'小鱼',role:'intern',dept:'营销二部',avatar:'鱼',text:'同问！不同品类的节奏是不是也有差异？',time:'50分钟前'},
+    ]},
+    {id:2,title:'渠道转型下运营的职责边界在哪？',cat:'业务理解',urg:'normal',status:'pending',author:'云端',authorRole:'intern',authorDept:'营销一部',time:'3小时前',tags:['讨论'],body:'渠道转型趋势下，一线运营的职责在变化，具体体现在哪些方面？',answers:[]},
+    {id:3,title:'区域促销方案怎么做数据分析支撑？',cat:'技能提升',urg:'normal',status:'resolved',author:'云端',authorRole:'intern',authorDept:'营销一部',time:'昨天',tags:['求助'],body:'导师让我写促销方案要有数据支撑，但不知道从哪些维度分析。',answers:[
+      {author:'清风',role:'mentor',dept:'营销一部',avatar:'清',text:'分析框架：\n1. 市场容量：历史销售数据、同比环比\n2. 竞品分析：促销力度和节奏\n3. 渠道分布：各门店销售贡献占比\n4. 客户画像：目标群体消费特征\n\n先从BI系统拉数据，明天带你跑一次。',time:'昨天'},
+    ]},
+    {id:4,title:'报销流程具体怎么走？系统里找不到入口',cat:'流程规范',urg:'urgent',status:'pending',author:'小鱼',authorRole:'intern',authorDept:'营销二部',time:'1小时前',tags:['求助','关注事项'],body:'昨天出外勤需要报销交通费，OA系统找不到报销入口，同事说法也不一样。',answers:[]},
+    {id:5,title:'客户拜访前需要准备什么材料？',cat:'业务理解',urg:'normal',status:'pending',author:'橙子',authorRole:'intern',authorDept:'营销三部',time:'4小时前',tags:['求助'],body:'下周跟导师拜访经销商，第一次去不知道准备什么，有没有checklist？',answers:[]},
+    {id:6,title:'转正考核的具体标准是什么？',cat:'职业发展',urg:'normal',status:'pending',author:'极光',authorRole:'intern',authorDept:'营销一部',time:'5小时前',tags:['关注事项','讨论'],body:'想提前了解转正考核维度和标准，方便有针对性地准备。',answers:[]},
+    {id:7,title:'分享：经销商经营健康度判断方法',cat:'业务理解',urg:'normal',status:'resolved',author:'晨曦',authorRole:'mentor',authorDept:'营销二部',time:'1天前',tags:['经验分享'],body:'很多实习生问怎么判断经销商经营是否健康，分享几个关键指标：\n1. 库存周转天数：健康值30-45天\n2. 销售达成率：月度目标完成情况\n3. 售后投诉率：反映服务质量\n4. 门店形象：是否按标准陈列',answers:[
+      {author:'山竹',role:'intern',dept:'营销二部',avatar:'竹',text:'太实用了！库存周转天数这个指标之前完全没关注过，感谢分享！',time:'1天前'},
+      {author:'星辰',role:'mentor',dept:'营销一部',avatar:'星',text:'补充一点：还可以看经销商的资金周转情况，如果压货严重可能存在风险。',time:'23小时前'},
+    ]},
+    {id:8,title:'出差审批走哪个系统？',cat:'流程规范',urg:'urgent',status:'pending',author:'晚风',authorRole:'intern',authorDept:'综合管理',time:'30分钟前',tags:['求助','关注事项'],body:'下周出差跟导师去外地，需要提前走审批，不知道在哪个系统操作。',answers:[]},
+    {id:9,title:'关于新员工报销和审批流程的统一说明',cat:'流程规范',urg:'normal',status:'resolved',author:'HR小助手',authorRole:'hr',authorDept:'人力资源部',time:'3小时前',tags:['官方通知','关注事项'],body:'注意到最近多位同事在问报销和审批流程，统一说明如下：\n\n1. 报销：OA系统 → 费用管理 → 新建报销单\n2. 出差审批：OA系统 → 出差申请 → 直属上级审批\n3. 首次使用需先绑定银行卡（个人设置→银行信息）\n\n如有问题可联系综合管理部。',answers:[
+      {author:'小鱼',role:'intern',dept:'营销二部',avatar:'鱼',text:'找到了！原来要先绑银行卡才能看到入口，谢谢！',time:'2小时前'},
+    ]},
+  ]
+};
+
+function pickRole(r){
+  role=r;
+  document.querySelectorAll('.rc').forEach(function(c){c.classList.remove('on')});
+  document.querySelector('[data-r="'+r+'"]').classList.add('on');
+}
+
+function login(){
+  if(!role){toast('请选择身份','inf');return}
+  user=document.getElementById('nameIn').value||'匿名用户';
+  dept=document.getElementById('deptIn').value||'';
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('app').classList.add('on');
+  var tag=document.getElementById('userTag');
+  tag.className='ut t'+(role==='intern'?'i':role==='mentor'?'m':'h');
+  tag.innerHTML='<div class="av">'+user[0]+'</div><span>'+user+' · '+RM[role]+'</span>';
+  if(role==='hr') document.getElementById('tabHR').style.display='inline-block';
+  buildFilters();
+  renderPosts();
+  renderGrowthPanel();
+  initHRCharts();
+}
+
+function logout(){
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('loginPage').style.display='flex';
+  role='';user='';dept='';curFilter='all';
+  document.getElementById('tabHR').style.display='none';
+  // destroy charts
+  Object.keys(chartInstances).forEach(function(k){if(chartInstances[k]){chartInstances[k].destroy();chartInstances[k]=null}});
+}
+
+function swTab(el){
+  document.querySelectorAll('.tb').forEach(function(t){t.classList.remove('on')});
+  el.classList.add('on');
+  document.querySelectorAll('.pn').forEach(function(p){p.classList.remove('on')});
+  document.getElementById('p-'+el.dataset.p).classList.add('on');
+}
+
+function buildFilters(){
+  var cats=['all','pending','resolved','urgent','业务理解','流程规范','技能提升','职业发展'];
+  var labels={all:'全部',pending:'待解答',resolved:'已解答',urgent:'紧急'};
+  var tags=Object.keys(TAG_MAP);
+  var all=cats.concat(tags);
+  var html='';
+  all.forEach(function(f){
+    var label=labels[f]||(TAG_MAP[f]?TAG_MAP[f].icon+' '+f:f);
+    html+='<span class="fc'+(f===curFilter?' on':'')+'" data-f="'+f+'" onclick="setFilter(this)">'+label+'</span>';
+  });
+  document.getElementById('filterBar').innerHTML=html;
+}
+
+function setFilter(el){
+  curFilter=el.dataset.f;
+  document.querySelectorAll('.fc').forEach(function(c){c.classList.remove('on')});
+  el.classList.add('on');
+  renderPosts();
+}
+
+function toggleTag(el){
+  var t=el.dataset.tag;
+  var idx=selectedTags.indexOf(t);
+  if(idx>-1){selectedTags.splice(idx,1);el.classList.remove('on')}
+  else{selectedTags.push(t);el.classList.add('on')}
+}
+
+function renderPosts(){
+  var list=D.posts.slice();
+  if(curFilter==='pending') list=list.filter(function(p){return p.status==='pending'});
+  else if(curFilter==='resolved') list=list.filter(function(p){return p.status==='resolved'});
+  else if(curFilter==='urgent') list=list.filter(function(p){return p.urg==='urgent'});
+  else if(curFilter!=='all'){
+    if(TAG_MAP[curFilter]) list=list.filter(function(p){return p.tags&&p.tags.indexOf(curFilter)>-1});
+    else list=list.filter(function(p){return p.cat===curFilter});
+  }
+  var el=document.getElementById('postList');
+  if(!list.length){el.innerHTML='<div style="text-align:center;color:var(--t3);padding:40px 0">暂无相关帖子</div>';return}
+  el.innerHTML=list.map(function(p){
+    var tagHtml='';
+    if(p.tags&&p.tags.length){
+      tagHtml='<div class="post-tags">'+p.tags.map(function(t){
+        var tm=TAG_MAP[t]||{cls:'tag-help',icon:'⚪'};
+        return '<span class="pt '+tm.cls+'">'+tm.icon+' '+t+'</span>';
+      }).join('')+'</div>';
+    }
+    return '<div class="post" onclick="openPost('+p.id+')">'+
+      '<div class="post-top"><span class="post-title">'+p.title+'</span>'+
+      '<span class="post-status '+(p.status==='resolved'?'resolved':p.urg==='urgent'?'urgent':'pending')+'">'+(p.status==='resolved'?'已解答':p.urg==='urgent'?'紧急':'待解答')+'</span></div>'+
+      tagHtml+
+      '<div class="post-meta"><span class="it '+RC[p.authorRole]+'">'+RM[p.authorRole]+'</span><span>'+p.author+'</span><span>'+p.cat+'</span><span>'+p.time+'</span><span style="color:var(--primary);font-weight:500">💬 '+p.answers.length+'</span></div>'+
+    '</div>';
+  }).join('');
+}
+
+function openPost(id){
+  var p=D.posts.filter(function(x){return x.id===id})[0];if(!p)return;
+  var tagHtml='';
+  if(p.tags&&p.tags.length){
+    tagHtml='<div style="margin-bottom:8px">'+p.tags.map(function(t){
+      var tm=TAG_MAP[t]||{cls:'tag-help',icon:'⚪'};
+      return '<span class="pt '+tm.cls+'">'+tm.icon+' '+t+'</span>';
+    }).join('')+'</div>';
+  }
+  var ans=p.answers.map(function(a){
+    return '<div class="rp"><div class="rp-h">'+
+      '<div class="rp-a" style="background:'+(a.role==='intern'?'#1677ff':a.role==='mentor'?'#389e0d':'#d48806')+'">'+a.avatar+'</div>'+
+      '<span class="it '+RC[a.role]+'">'+RM[a.role]+'</span>'+
+      '<strong style="font-size:13px">'+a.author+'</strong>'+
+      '<span style="color:var(--t3)">'+a.time+'</span></div>'+
+      '<div class="rp-t">'+a.text.replace(/\n/g,'<br>')+'</div></div>';
+  }).join('');
+  ans+='<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bd)">'+
+    '<div class="fg"><label class="fl">我的回答</label><textarea class="ft" id="ansInput" placeholder="写下你的回答…" style="min-height:80px"></textarea></div>'+
+    '<button class="btn bp" onclick="submitAns('+p.id+')">提交回答</button></div>';
+  openModal(p.title,
+    '<div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
+    '<span class="post-status '+(p.status==='resolved'?'resolved':p.urg==='urgent'?'urgent':'pending')+'">'+(p.status==='resolved'?'已解答':p.urg==='urgent'?'紧急':'待解答')+'</span>'+
+    '<span class="it '+RC[p.authorRole]+'">'+RM[p.authorRole]+'</span>'+
+    '<span style="font-size:12px;color:var(--t3)">'+p.author+' · '+p.cat+' · '+p.time+'</span></div>'+
+    tagHtml+
+    '<div style="font-size:14px;color:var(--t2);margin-bottom:16px;line-height:1.8">'+p.body.replace(/\n/g,'<br>')+'</div>'+
+    '<div style="font-size:14px;font-weight:600;margin-bottom:8px">💬 回答 ('+p.answers.length+')</div>'+ans
+  );
+}
+
+function submitAns(pid){
+  var inp=document.getElementById('ansInput');
+  if(!inp||!inp.value.trim()){toast('请输入回答','inf');return}
+  var p=D.posts.filter(function(x){return x.id===pid})[0];
+  p.answers.push({author:user,role:role,dept:dept,avatar:user[0],text:inp.value.trim(),time:'刚刚'});
+  p.status='resolved';
+  closeModal();toast('回答已提交！');renderPosts();
+}
+
+document.addEventListener('input',function(e){
+  if(e.target.id==='qTitle'||e.target.id==='qBody'){
+    var t=document.getElementById('qTitle').value,b=document.getElementById('qBody').value;
+    var h=document.getElementById('routeHint'),tx=document.getElementById('routeText');
+    if(t.length>3||b.length>10){
+      h.style.display='block';
+      var cat=document.getElementById('qCat').value;
+      var map={'业务理解':'问题已智能匹配至业务导师，预计2h内响应','流程规范':'问题已路由至综合管理部，紧急问题优先处理','技能提升':'问题已匹配至带教伙伴，擅长数据分析','职业发展':'问题已路由至HRBP，工作日内回复','其他':'问题已推送至全员答疑池，等待合适导师认领'};
+      tx.innerHTML=map[cat]||map['其他'];
+    }else h.style.display='none';
+  }
+});
+
+function submitPost(){
+  var t=document.getElementById('qTitle').value.trim();
+  var b=document.getElementById('qBody').value.trim();
+  if(!t){toast('请输入标题','inf');return}
+  if(!b){toast('请输入详情','inf');return}
+  D.posts.unshift({id:Date.now(),title:t,cat:document.getElementById('qCat').value,urg:document.getElementById('qUrg').value,status:'pending',author:user,authorRole:role,authorDept:dept,time:'刚刚',tags:selectedTags.slice(),body:b,answers:[]});
+  document.getElementById('qTitle').value='';document.getElementById('qBody').value='';document.getElementById('routeHint').style.display='none';
+  selectedTags=[];document.querySelectorAll('.tag-opt').forEach(function(o){o.classList.remove('on')});
+  toast('发布成功！');renderPosts();buildFilters();
+}
+
+function submitPlan(){
+  var d=document.getElementById('planDesc').value.trim();
+  if(!d){toast('请填写调整说明','inf');return}
+  document.getElementById('planDesc').value='';toast('方案调整已提交！');
+}
+
+/* ============ GROWTH PANEL - role-aware ============ */
+function renderGrowthPanel(){
+  var gc=document.getElementById('growthContent');
+  // destroy old charts
+  ['growthRadar','growthCatBar','growthDeptBar'].forEach(function(k){
+    if(chartInstances[k]){chartInstances[k].destroy();chartInstances[k]=null}
+  });
+
+  if(role==='intern'){
+    gc.innerHTML=
+      '<div class="ai"><div class="ai-b">✨ AI 智能分析</div><div class="ai-t">根据近7天发帖记录，「业务理解」维度提问最多（占42%），建议加强<strong>客户沟通</strong>和<strong>数据分析</strong>方面的学习。导师已为你推荐3门相关选修课。</div></div>'+
+      '<div class="stats">'+
+        '<div class="st"><div class="st-l">我的发帖</div><div class="st-v" style="color:var(--primary)">3</div></div>'+
+        '<div class="st"><div class="st-l">我的回答</div><div class="st-v" style="color:var(--ok)">1</div></div>'+
+        '<div class="st"><div class="st-l">论坛总帖数</div><div class="st-v" style="color:var(--purple)">'+D.posts.length+'</div></div>'+
+        '<div class="st"><div class="st-l">成长积分</div><div class="st-v" style="color:var(--warn)">680</div></div>'+
+      '</div>'+
+      '<div class="g2">'+
+        '<div class="cd"><div class="ct">📊 能力雷达</div><div class="ch"><canvas id="growthRadar"></canvas></div></div>'+
+        '<div class="cd"><div class="ct">🗺️ 成长路径</div>'+
+          '<div class="tl">'+
+            '<div class="tli done"><div class="tl-p">第一阶段 · 入职适应</div><div class="tl-d">入职培训、了解组织架构、产品线</div><div class="tl-t">第1-2周 ✅</div></div>'+
+            '<div class="tli now"><div class="tl-p">第二阶段 · 业务融入</div><div class="tl-d">跟随导师参与项目、学习销售流程</div><div class="tl-t">第3-6周 🔥</div><div class="pb"><div class="pf" style="width:35%;background:var(--warn)"></div></div></div>'+
+            '<div class="tli"><div class="tl-p">第三阶段 · 独立作战</div><div class="tl-d">独立负责区域、制定促销方案</div><div class="tl-t">第7-10周</div></div>'+
+            '<div class="tli"><div class="tl-p">第四阶段 · 成果交付</div><div class="tl-d">项目答辩、转正评估</div><div class="tl-t">第11-12周</div></div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="cd">'+
+        '<div class="ct">📚 课程进度</div>'+
+        '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px"><span>业务全景认知</span><span style="color:var(--ok)">已完成</span></div><div class="pb"><div class="pf" style="width:100%;background:var(--ok)"></div></div></div>'+
+        '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px"><span>核心品类知识</span><span style="color:var(--ok)">已完成</span></div><div class="pb"><div class="pf" style="width:100%;background:var(--ok)"></div></div></div>'+
+        '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px"><span>渠道与终端运营</span><span style="color:var(--ok)">已完成</span></div><div class="pb"><div class="pf" style="width:100%;background:var(--ok)"></div></div></div>'+
+        '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px"><span>渠道转型专题</span><span style="color:var(--ok)">已完成</span></div><div class="pb"><div class="pf" style="width:100%;background:var(--ok)"></div></div></div>'+
+        '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px"><span>选修：数据分析入门</span><span style="color:var(--warn)">60%</span></div><div class="pb"><div class="pf" style="width:60%;background:var(--warn)"></div></div></div>'+
+        '<div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:2px"><span>选修：客户沟通技巧</span><span style="color:var(--t3)">未开始</span></div><div class="pb"><div class="pf" style="width:0%"></div></div></div>'+
+      '</div>';
+    // init radar
+    setTimeout(function(){
+      var rc=document.getElementById('growthRadar');
+      if(rc) chartInstances['growthRadar']=new Chart(rc,{type:'radar',data:{labels:['业务理解','客户沟通','数据分析','流程规范','产品知识','团队协作'],datasets:[{label:'当前',data:[78,55,60,72,68,82],fill:true,backgroundColor:'rgba(22,119,255,.15)',borderColor:'#1677ff',pointBackgroundColor:'#1677ff'},{label:'目标',data:[85,75,80,85,80,85],fill:true,backgroundColor:'rgba(118,75,162,.08)',borderColor:'rgba(118,75,162,.5)',borderDash:[5,5],pointBackgroundColor:'rgba(118,75,162,.5)'}]},options:{scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:20}}},plugins:{legend:{position:'bottom'}}}});
+    },100);
+  } else if(role==='mentor'){
+    // Mentor: only see their mentored interns
+    var myInterns=[
+      {name:'云端',dept:'营销一部',avatar:'云',score:680,progress:58,status:'正常',tags:['活跃','进步快']},
+      {name:'极光',dept:'营销一部',avatar:'极',score:420,progress:35,status:'关注',tags:['转正焦虑']},
+    ];
+    var myPosts=D.posts.filter(function(p){return p.authorRole==='intern' && myInterns.some(function(m){return m.name===p.author})});
+    var myPending=myPosts.filter(function(p){return p.status==='pending'}).length;
+    var myResolved=myPosts.filter(function(p){return p.status==='resolved'}).length;
+
+    gc.innerHTML=
+      '<div class="ai"><div class="ai-b">✨ AI 带教助手</div><div class="ai-t">你当前带教<strong>'+myInterns.length+'名</strong>实习生。「极光」近期转正考核关注度较高，建议安排一次1对1沟通；「云端」业务理解提问较多（占42%），可针对性安排客户拜访实践。</div></div>'+
+      '<div class="stats">'+
+        '<div class="st"><div class="st-l">带教实习生</div><div class="st-v" style="color:var(--primary)">'+myInterns.length+'</div></div>'+
+        '<div class="st"><div class="st-l">他们发帖数</div><div class="st-v" style="color:var(--purple)">'+myPosts.length+'</div></div>'+
+        '<div class="st"><div class="st-l">待我回复</div><div class="st-v" style="color:var(--err)">'+myPending+'</div></div>'+
+        '<div class="st"><div class="st-l">已解答</div><div class="st-v" style="color:var(--ok)">'+myResolved+'</div></div>'+
+      '</div>'+
+      '<div class="cd"><div class="ct">👥 我带教的实习生</div>'+
+        myInterns.map(function(m){
+          var sColor=m.status==='正常'?'var(--ok)':m.status==='关注'?'var(--warn)':'var(--err)';
+          return '<div class="intern-card" style="cursor:pointer" onclick="openInternDetail(\''+m.name+'\')">'+
+            '<div class="ic-av">'+m.avatar+'</div>'+
+            '<div class="ic-info"><div class="ic-name">'+m.name+' · '+m.dept+'</div>'+
+            '<div class="ic-dept">成长积分 '+m.score+' · 进度 '+m.progress+'% · '+m.tags.map(function(t){return '#'+t}).join(' ')+'</div></div>'+
+            '<div class="ic-score" style="color:'+sColor+'">'+m.status+'</div></div>';
+        }).join('')+
+      '</div>'+
+      '<div class="g2">'+
+        '<div class="cd"><div class="ct">📊 带教实习生能力对比</div><div class="ch"><canvas id="growthRadar"></canvas></div></div>'+
+        '<div class="cd"><div class="ct">📈 他们的发帖趋势</div><div class="ch"><canvas id="growthCatBar"></canvas></div></div>'+
+      '</div>'+
+      '<div class="cd"><div class="ct">📋 带教实习生成长路径</div>'+
+        '<div class="tl">'+
+          '<div class="tli done"><div class="tl-p">第一阶段 · 入职适应</div><div class="tl-d">'+myInterns.length+'人已完成</div></div>'+
+          '<div class="tli now"><div class="tl-p">第二阶段 · 业务融入</div><div class="tl-d">'+myInterns.length+'人进行中 · 平均进度'+Math.round(myInterns.reduce(function(s,m){return s+m.progress},0)/myInterns.length)+'%</div><div class="pb"><div class="pf" style="width:'+Math.round(myInterns.reduce(function(s,m){return s+m.progress},0)/myInterns.length)+'%;background:var(--warn)"></div></div></div>'+
+          '<div class="tli"><div class="tl-p">第三阶段 · 独立作战</div><div class="tl-d">尚未开始</div></div>'+
+          '<div class="tli"><div class="tl-p">第四阶段 · 成果交付</div><div class="tl-d">尚未开始</div></div>'+
+        '</div>'+
+      '</div>';
+    setTimeout(function(){
+      var rc=document.getElementById('growthRadar');
+      if(rc) chartInstances['growthRadar']=new Chart(rc,{type:'radar',data:{labels:['业务理解','客户沟通','数据分析','流程规范','产品知识','团队协作'],datasets:[{label:'云端',data:[78,55,60,72,68,82],fill:true,backgroundColor:'rgba(22,119,255,.12)',borderColor:'#1677ff',pointBackgroundColor:'#1677ff'},{label:'极光',data:[65,70,45,80,55,72],fill:true,backgroundColor:'rgba(250,173,20,.12)',borderColor:'#faad14',pointBackgroundColor:'#faad14'},{label:'岗位要求',data:[85,75,80,85,80,85],fill:false,borderColor:'rgba(0,0,0,.2)',borderDash:[5,5],pointBackgroundColor:'rgba(0,0,0,.2)'}]},options:{scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:20}}},plugins:{legend:{position:'bottom'}}}});
+      var cb=document.getElementById('growthCatBar');
+      if(cb){
+        var catCount={};
+        myPosts.forEach(function(p){catCount[p.cat]=(catCount[p.cat]||0)+1});
+        var cats=Object.keys(catCount);var vals=Object.values(catCount);
+        chartInstances['growthCatBar']=new Chart(cb,{type:'bar',data:{labels:cats,datasets:[{label:'帖子数',data:vals,backgroundColor:'rgba(22,119,255,.7)'}]},options:{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}}});
+      }
+    },100);
+
+  } else {
+    // HR: see ALL interns
+    var totalPosts=D.posts.length;
+    var pendingPosts=D.posts.filter(function(p){return p.status==='pending'}).length;
+    var resolvedPosts=D.posts.filter(function(p){return p.status==='resolved'}).length;
+    var urgentPosts=D.posts.filter(function(p){return p.urg==='urgent'}).length;
+    var totalAnswers=D.posts.reduce(function(s,p){return s+p.answers.length},0);
+
+    gc.innerHTML=
+      '<div class="ai"><div class="ai-b">✨ AI 全局洞察</div><div class="ai-t">当前在岗实习生20人，近7天论坛活跃度<strong>环比提升12%</strong>。「业务理解」类问题占42%为最高，「流程规范」类激增85%需关注。建议加强第2周流程培训，并对活跃度低的实习生进行主动沟通。</div></div>'+
+      '<div class="stats">'+
+        '<div class="st"><div class="st-l">在岗实习生</div><div class="st-v" style="color:var(--primary)">20</div></div>'+
+        '<div class="st"><div class="st-l">论坛总帖数</div><div class="st-v" style="color:var(--purple)">'+totalPosts+'</div></div>'+
+        '<div class="st"><div class="st-l">待解答</div><div class="st-v" style="color:var(--err)">'+pendingPosts+'</div></div>'+
+        '<div class="st"><div class="st-l">已解答</div><div class="st-v" style="color:var(--ok)">'+resolvedPosts+'</div></div>'+
+        '<div class="st"><div class="st-l">紧急问题</div><div class="st-v" style="color:var(--warn)">'+urgentPosts+'</div></div>'+
+        '<div class="st"><div class="st-l">总回答数</div><div class="st-v" style="color:var(--primary)">'+totalAnswers+'</div></div>'+
+      '</div>'+
+      '<div class="g2">'+
+        '<div class="cd"><div class="ct">📊 全体实习生能力雷达</div><div class="ch"><canvas id="growthRadar"></canvas></div></div>'+
+        '<div class="cd"><div class="ct">📈 帖子分类分布</div><div class="ch"><canvas id="growthCatBar"></canvas></div></div>'+
+      '</div>'+
+      '<div class="g2">'+
+        '<div class="cd"><div class="ct">🗂️ 部门发帖统计</div><div class="ch"><canvas id="growthDeptBar"></canvas></div></div>'+
+        '<div class="cd"><div class="ct">⚠️ 需关注实习生</div>'+
+          '<div class="intern-card"><div class="ic-av">晚</div><div class="ic-info"><div class="ic-name">晚风 · 综合管理</div><div class="ic-dept">连续5天无提问 · 课程停滞20%</div></div><div class="ic-score" style="color:var(--err)">预警</div></div>'+
+          '<div class="intern-card"><div class="ic-av">极</div><div class="ic-info"><div class="ic-name">极光 · 营销一部</div><div class="ic-dept">转正考核关注度极高 · 需引导</div></div><div class="ic-score" style="color:var(--warn)">关注</div></div>'+
+          '<div class="intern-card"><div class="ic-av">橙</div><div class="ic-info"><div class="ic-name">橙子 · 营销三部</div><div class="ic-dept">发帖求助后3天未获回复</div></div><div class="ic-score" style="color:var(--warn)">关注</div></div>'+
+          '<div class="intern-card"><div class="ic-av">山</div><div class="ic-info"><div class="ic-name">山竹 · 营销二部</div><div class="ic-dept">活跃度高 · 成长积分820（前10%）</div></div><div class="ic-score" style="color:var(--ok)">优秀</div></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="cd"><div class="ct">📋 全体实习生成长路径概览</div>'+
+        '<div class="tl">'+
+          '<div class="tli done"><div class="tl-p">第一阶段 · 入职适应（第1-2周）</div><div class="tl-d">18人已完成 · 平均用时10天</div></div>'+
+          '<div class="tli now"><div class="tl-p">第二阶段 · 业务融入（第3-6周）</div><div class="tl-d">12人进行中 · 平均进度35%</div><div class="pb"><div class="pf" style="width:35%;background:var(--warn)"></div></div></div>'+
+          '<div class="tli"><div class="tl-p">第三阶段 · 独立作战（第7-10周）</div><div class="tl-d">尚未开始</div></div>'+
+          '<div class="tli"><div class="tl-p">第四阶段 · 成果交付（第11-12周）</div><div class="tl-d">尚未开始</div></div>'+
+        '</div>'+
+      '</div>';
+    setTimeout(function(){
+      var rc=document.getElementById('growthRadar');
+      if(rc) chartInstances['growthRadar']=new Chart(rc,{type:'radar',data:{labels:['业务理解','客户沟通','数据分析','流程规范','产品知识','团队协作'],datasets:[{label:'实习生平均',data:[72,58,55,65,63,78],fill:true,backgroundColor:'rgba(22,119,255,.15)',borderColor:'#1677ff',pointBackgroundColor:'#1677ff'},{label:'岗位要求',data:[85,75,80,85,80,85],fill:true,backgroundColor:'rgba(250,173,20,.08)',borderColor:'rgba(250,173,20,.5)',borderDash:[5,5],pointBackgroundColor:'rgba(250,173,20,.5)'}]},options:{scales:{r:{beginAtZero:true,max:100,ticks:{stepSize:20}}},plugins:{legend:{position:'bottom'}}}});
+      var cb=document.getElementById('growthCatBar');
+      if(cb){
+        var catCount={};
+        D.posts.forEach(function(p){catCount[p.cat]=(catCount[p.cat]||0)+1});
+        var cats=Object.keys(catCount);var vals=Object.values(catCount);
+        chartInstances['growthCatBar']=new Chart(cb,{type:'bar',data:{labels:cats,datasets:[{label:'帖子数',data:vals,backgroundColor:['rgba(22,119,255,.7)','rgba(250,173,20,.7)','rgba(82,196,26,.7)','rgba(118,75,162,.7)','rgba(255,77,79,.7)']}]},options:{scales:{y:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}}});
+      }
+      var db=document.getElementById('growthDeptBar');
+      if(db){
+        var deptCount={};
+        D.posts.forEach(function(p){if(p.authorDept)deptCount[p.authorDept]=(deptCount[p.authorDept]||0)+1});
+        var dLabels=Object.keys(deptCount);var dVals=Object.values(deptCount);
+        chartInstances['growthDeptBar']=new Chart(db,{type:'bar',data:{labels:dLabels,datasets:[{label:'发帖数',data:dVals,backgroundColor:'rgba(118,75,162,.7)'}]},options:{indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{display:false}}}});
+      }
+    },100);
+  }
+}
+
+/* ============ HR Charts ============ */
+function initHRCharts(){
+  ['hrTrend','hrBar'].forEach(function(k){if(chartInstances[k]){chartInstances[k].destroy();chartInstances[k]=null}});
+  var ht=document.getElementById('hrTrend');
+  if(ht) chartInstances['hrTrend']=new Chart(ht,{type:'line',data:{labels:['第1周','第2周','第3周','第4周'],datasets:[{label:'业务理解',data:[12,18,15,20],borderColor:'#1677ff',backgroundColor:'rgba(22,119,255,.1)',fill:true,tension:.3},{label:'流程规范',data:[5,8,12,22],borderColor:'#faad14',backgroundColor:'rgba(250,173,20,.1)',fill:true,tension:.3},{label:'技能提升',data:[8,10,9,12],borderColor:'#52c41a',backgroundColor:'rgba(82,196,26,.1)',fill:true,tension:.3},{label:'职业发展',data:[3,5,4,6],borderColor:'#764ba2',backgroundColor:'rgba(118,75,162,.1)',fill:true,tension:.3}]},options:{scales:{y:{beginAtZero:true}},plugins:{legend:{position:'bottom'}}}});
+  var hb=document.getElementById('hrBar');
+  if(hb) chartInstances['hrBar']=new Chart(hb,{type:'bar',data:{labels:['营销一部','营销二部','营销三部','综合管理'],datasets:[{label:'平均响应(h)',data:[2.1,4.5,2.8,5.2],backgroundColor:'rgba(22,119,255,.7)'},{label:'解答率(%)',data:[88,60,85,70],backgroundColor:'rgba(82,196,26,.7)'}]},options:{scales:{y:{beginAtZero:true}},plugins:{legend:{position:'bottom'}}}});
+}
+
+function toast(msg,type){var t=document.getElementById('toast'),m=document.getElementById('toastMsg');m.textContent=msg;t.className='toast '+(type||'ok');setTimeout(function(){t.classList.add('show')},10);setTimeout(function(){t.classList.remove('show')},2500)}
+function openModal(title,body){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modalBg').classList.add('show')}
+function closeModal(){document.getElementById('modalBg').classList.remove('show')}
+</script>
+</body>
+</html>
